@@ -1,0 +1,44 @@
+name: Docker Image CI # Actions名称
+
+on: # 执行时机
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    # runs-on 指定job任务运行所需要的虚拟机环境(必填字段)
+    runs-on: ubuntu-latest
+    steps:
+      # 拉去代码
+      - name: checkout
+        # 使用action库  actions/checkout获取源码
+        uses: actions/checkout@master
+
+      # 安装依赖
+      - name: install
+        run: npm Install
+
+      # 打包
+      - name: build project
+        run: npm run build
+        
+      # 登录阿里云镜像容器服务，打包镜像，推送镜像
+      - name: Build the Docker image # 步骤名字
+        run: |
+          # 登录阿里云镜像容器服务
+          docker login --username=${{ secrets.DOCKER_USERNAME }} registry.cn-hangzhou.aliyuncs.com --password=${{ secrets.DOCKER_PASSWORD }}
+          # 使用当前目录的 Dockerfile 创建镜像，标签为 vue3-elm:latest
+          docker build -t vue3-elm:latest . 
+          # 打标签
+          docker tag vue3-elm registry.cn-hangzhou.aliyuncs.com/zlyyyy/bilibili-vue:latest
+          # 推送
+          docker push registry.cn-hangzhou.aliyuncs.com/zlyyyy/bilibili-vue:latest
+      # 登录服务器执行脚本
+      - name: ssh docker login
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: cd /home/vue3-elm/ && sh vue3-elm.sh ${{ secrets.DOCKER_USERNAME }} ${{ secrets.DOCKER_PASSWORD }}
