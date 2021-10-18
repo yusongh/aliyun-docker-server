@@ -31,9 +31,9 @@ jobs:
           # 使用当前目录的 Dockerfile 创建镜像，标签为 vue3-elm:latest
           docker build -t vue3-elm:latest . 
           # 打标签
-          docker tag vue3-elm registry.cn-hangzhou.aliyuncs.com/zlyyyy/bilibili-vue:latest
+          docker tag vue3-elm registry.cn-hangzhou.aliyuncs.com/yusongh/vue3-elm:latest
           # 推送
-          docker push registry.cn-hangzhou.aliyuncs.com/zlyyyy/bilibili-vue:latest
+          docker push registry.cn-hangzhou.aliyuncs.com/yusongh/vue3-elm:latest
       # 登录服务器执行脚本
       - name: ssh docker login
         uses: appleboy/ssh-action@master
