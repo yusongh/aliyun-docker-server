@@ -10,9 +10,9 @@ jobs:
     # runs-on 指定job任务运行所需要的虚拟机环境(必填字段)
     runs-on: ubuntu-latest
     steps:
-      # 拉去代码
-      - name: checkout
-        # 使用action库  actions/checkout获取源码
+      # 拉取代码
+      - name: checkout # 步骤名字
+        # 使用action库  actions/checkout拉取源码
         uses: actions/checkout@master
 
       # 安装依赖
@@ -24,7 +24,7 @@ jobs:
         run: npm run build
         
       # 登录阿里云镜像容器服务，打包镜像，推送镜像
-      - name: Build the Docker image # 步骤名字
+      - name: Build the Docker image
         run: |
           # 登录阿里云镜像容器服务
           docker login --username=${{ secrets.DOCKER_USERNAME }} registry.cn-hangzhou.aliyuncs.com --password=${{ secrets.DOCKER_PASSWORD }}
@@ -32,7 +32,7 @@ jobs:
           docker build -t vue3-elm:latest . 
           # 打标签
           docker tag vue3-elm registry.cn-hangzhou.aliyuncs.com/yusongh/vue3-elm:latest
-          # 推送
+          # 推送到阿里云镜像容器服务
           docker push registry.cn-hangzhou.aliyuncs.com/yusongh/vue3-elm:latest
       # 登录服务器执行脚本
       - name: ssh docker login
